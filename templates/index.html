@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI Chat</title>
+</head>
+<body>
+    <label for="characterSelect">Select a Character:</label>
+<select id="characterSelect" name="character">
+    <option value="Ben Shapiro">Ben Shapiro</option>
+    <option value="Brett Cooper">Brett Cooper</option>
+</select>
+
+    <h1>Welcome to ShapiroGPT</h1>
+    <div id="chat-container">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button id="send-button">Send</button>
+
+    <script>
+        // JavaScript code for handling the AI chat functionality
+        const chatContainer = document.getElementById("chat-container");
+        const userInput = document.getElementById("user-input");
+        const sendButton = document.getElementById("send-button");
+
+        // Function to add a message to the chat container
+        function addMessage(message, isUser) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = isUser ? "user-message" : "ai-message";
+            messageDiv.innerHTML = message;
+            chatContainer.appendChild(messageDiv);
+        }
+
+        // Event listener for the send button
+        sendButton.addEventListener("click", function() {
+            const userMessage = userInput.value;
+            addMessage("User: " + userMessage, true);
+            userInput.value = ""; // Clear the input field
+            const selectElement = document.getElementById("characterSelect");
+
+            // Send the user message to the Flask backend using AJAX/Fetch
+            fetch("/api/ai-chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: userMessage, character: selectElement.value })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const aiResponse = data.response;
+                addMessage("<br><b>" + selectElement.value + "</b>: " + aiResponse, false);
+                // Assuming `addMessage` is a function to add the message to the page.
+                // Make sure to use innerHTML for HTML content, and sanitize any user input to prevent XSS attacks.
+            })
+            .catch(error => {
+                console.error("Error sending message to server:", error);
+            });
+        });
+    </script>
+</body>
+</html>
