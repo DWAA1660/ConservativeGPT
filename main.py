@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import requests
-import json_stream.requests
 
 import json
-import asyncio
 import websockets
 from characters import *
 from flask_sock import Sock
