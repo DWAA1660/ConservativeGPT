@@ -12,45 +12,59 @@
     </select>
 
     <h1>Welcome to ShapiroGPT</h1>
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button id="send-button">Send</button>
+    
     <div id="chat-container">
         <!-- Chat messages will be displayed here -->
         <p id="chat-text"></p>
     </div>
-    <input type="text" id="user-input" placeholder="Type your message...">
-    <button id="send-button">Send</button>
-    
+
     <script type="text/javascript">
-        const chatText = document.getElementById("chat-text");
         const userInput = document.getElementById("user-input");
-        var sendButton = document.getElementById("send-button");
-        var chatContainer = document.getElementById("chat-container");
+        const sendButton = document.getElementById("send-button");
+        const chatContainer = document.getElementById("chat-container");
+
         const socket = new WebSocket('ws://' + location.host + '/ai-chat');
+        console.log("connected", socket);
+
         socket.addEventListener('message', ev => {
             const message = ev.data;
-    
-            // Append the message to the existing chat text
-            chatText.innerHTML += message;
-    
-            // Scroll the chatContainer to the bottom to show the latest message
-            chatText.scrollTop = chatText.scrollHeight;
-        });
-    
+            var chatText = document.getElementById("chat-text");
+            if (message != "COMPLETE"){
+                console.log(ev.data)
+                // Append the message to the existing chat text
+                chatText.innerHTML += message;
 
+                // Scroll the chatContainer to the bottom to show the latest message
+
+            }
+            else{
+                console.log("complete")
+                chatText.id = "complete_message";
+                var newDiv = document.createElement("p");
+                newDiv.id = "chat-text";
+                chatContainer.appendChild(newDiv);
+            }
+            
+
+        });
 
         sendButton.addEventListener("click", function() {
             const userMessage = userInput.value;
             const selectElement = document.getElementById("characterSelect").value;
-            addMessage("User: " + userMessage, true);
+            addMessage("User: " + userMessage);
             userInput.value = "";
             const data = { message: userMessage, character: selectElement };
+            console.log(data);
             socket.send(JSON.stringify(data));
         });
 
-        function addMessage(message, isUser) {
-            const messageDiv = document.createElement("div");
-            messageDiv.className = isUser ? "user-message" : "ai-message";
-            messageDiv.innerHTML = message;
-            chatContainer.appendChild(messageDiv);
+        function addMessage(message) {
+
+            var Usermessage = document.createElement("p");
+            Usermessage.innerHTML = message;
+            chatContainer.appendChild(Usermessage);
         }
     </script>
 </body>

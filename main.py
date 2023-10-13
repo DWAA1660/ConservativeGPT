@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import requests
+import json_stream.requests
 
 import json
 import asyncio
@@ -21,6 +22,10 @@ def get_least_busy_node():
 	# The least busy node will be the first element in the sorted list
 	return sorted_nodes[0]
 
+def visitor(item, path):
+    print(f"{item} at path {path}")
+    
+
 def get_response(prompt: str, character: str, ws):
 	data = {
 		"messages": [
@@ -33,8 +38,7 @@ def get_response(prompt: str, character: str, ws):
 				"role": "user"
 			}
 		],
-		"max_tokens": 800,
-		"stop": ["<<SYS>>"],
+		"max_tokens": 2000,
 		"stream": True
 	}
 	data['messages'][1]['content'] = prompt
@@ -45,29 +49,39 @@ def get_response(prompt: str, character: str, ws):
 			node['queue'] += 1
 			break
 	print(node_to_use, nodes)
-	try:
-		response = requests.post(node_to_use['url'], json=data, stream=True)
-		returned = ""
-		data = ""
-		i = 0
-		for thing in response:
-		
-			decoded_line = thing.decode('utf-8')
-			var = decoded_line.replace("data: ", "")
+	response = requests.post(node_to_use['url'], json=data, stream=True)
+	returned = ""
+	data = ""
+	i = 0
+	for thing in response:
+		decoded_line = thing.decode('utf-8')
+		var = decoded_line.replace("data: ", "")
+		if ": ping -" not in var and "{'role': 'assistant" not in var and "[DONE]" not in var:
 			json_var = json.dumps(var)
 			uwu = json.loads(json_var)
-			
+			print(uwu, 6)
 			data += uwu
 			i +=1
 			if i >=2:
-				almost_last = json.loads(data)['choices'][0]['delta']
-				content = str(almost_last).split("'")[3]
+				try:
+					print(data, 7)
+					almost_last = json.loads(data)['choices'][0]['delta']
+				except json.decoder.JSONDecodeError as e:
+					print(3, e, data)
+				try:
+					print(almost_last,8)
+					try:
+						content = almost_last['content']
+					except KeyError as e:
+						content = ""
+				except json.decoder.JSONDecodeError as e:
+					print(4, e, almost_last)			
 				ws.send(content)
+				print(10000)
 				returned += content
 				i = 0
 				data = ""
-	except json.decoder.JSONDecodeError:
-		print(":(")
+	ws.send("COMPLETE")
 	node['queue'] -= 1
 	requests.post(ws_url, json={"username": "Prompts", "content": f"`{prompt}`: {character}"})
 	requests.post(ws_url, json={"username": "Result", "content": f"`{returned}`"})
@@ -77,17 +91,10 @@ def get_response(prompt: str, character: str, ws):
 def index():
 	return render_template("index.html")
 
-async def websocket_handler(websocket, path):
-	async for message in websocket:
-		data = json.loads(message)
-		user_message = data.get('message')
-		character = data.get('character')
-		ai_response = get_response(user_message, character)
-		await websocket.send(ai_response)
-
 @sock.route('/ai-chat')
 def echo(ws):
     while True:
+        
         data = ws.receive()
         real_data = json.loads(data)
         get_response(real_data['message'], real_data['character'], ws)
