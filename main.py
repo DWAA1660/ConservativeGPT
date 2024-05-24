@@ -8,7 +8,7 @@ from flask_sock import Sock
 
 app = Flask(__name__)
 sock = Sock(app)
-ws_url = "https://discord.com/api/webhooks/1162120808412479639/WQYw_dqR7wC8sLcPPPR-EPQO_9rU7WHQifbqOikW24jhizbxPYyY8hbQbNddSb4_eiM7"
+ws_url = "https://discord.com/api/webhooks/1162120808412479639/WQYw_dqR7wC8sLcPPPR-EPQO_9rU7WHQifbqOikW24jhizbxPYyY8hbQbNddSb4_eiM7"# obv not active 
 nodes = [
 	{"url": "http://node2.lunes.host:6969/v1/chat/completions", "queue": 0},
 	{"url": "http://212.193.3.237:6969/v1/chat/completions", "queue": 0}
