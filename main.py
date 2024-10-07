@@ -43,10 +43,10 @@ def get_response(prompt: str, character: str, ws):
 
 	for output in stream:
 		print(output, 1000)
-		text = json.dumps(output)
-		print(text, 90000)
-		content = text['choices'][0]['text']
-		ws.send(content)
+		# text = json.dumps(output)
+		# print(text, 90000)
+		# content = text['choices'][0]['text']
+		# ws.send(content)
 
 	# ws.send("COMPLETE")
 	# node['queue'] -= 1
