@@ -43,8 +43,8 @@ def get_response(prompt: str, character: str, ws):
 
 	for output in stream:
 		text = json.dumps(output)
-
-		content = text['choices'][0]['text']
+		text_json = json.load(text)
+		content = text_json['choices'][0]['text']
 		ws.send(content)
 
 	# ws.send("COMPLETE")
