@@ -43,7 +43,9 @@ def get_response(prompt: str, character: str, ws):
 
 	for output in stream:
 		text = json.dumps(output)
+		print(text, type(text))
 		text_json = json.load(text)
+		print(text_json, type(text_json))
 		content = text_json['choices'][0]['text']
 		ws.send(content)
 
