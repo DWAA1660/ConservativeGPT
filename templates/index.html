@@ -24,7 +24,7 @@
         const userInput = document.getElementById("user-input");
         var sendButton = document.getElementById("send-button");
         var chatContainer = document.getElementById("chat-container");
-        const socket = new WebSocket('wss://' + location.host + '/ai-chat');
+        const socket = new WebSocket('ws://' + '23.27.249.47:5001' + '/ai-chat');
         socket.addEventListener('message', ev => {
             const message = ev.data;
     
