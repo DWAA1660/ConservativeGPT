@@ -32,7 +32,7 @@ def get_response(prompt: str, character: str, ws):
 	parser.add_argument("-m", "--model", type=str, default="Wizard-Vicuna30B-UncensoredQ4ks.gguf")
 	args = parser.parse_args()
 
-	llm = Llama(model_path=args.model)
+	llm = Llama(model_path=args.model, n_threads=48)
 
 	stream = llm(
 		f"Question: {prompt} Answer: ",
