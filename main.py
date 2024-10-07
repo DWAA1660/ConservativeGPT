@@ -32,7 +32,7 @@ def get_response(prompt: str, character: str, ws):
 	parser.add_argument("-m", "--model", type=str, default="wizard-vicuna-13b-uncensored.q4_k_m.gguf")
 	args = parser.parse_args()
 
-	llm = Llama(model_path=args.model, n_threads=48)
+	llm = Llama(model_path=args.model, n_threads=24)
 
 	stream = llm(
 		f"{to_fine_tune[character]} Question: {prompt} Answer: ",
