@@ -35,7 +35,7 @@ def get_response(prompt: str, character: str, ws):
 	llm = Llama(model_path=args.model, n_threads=48)
 
 	stream = llm(
-		f"Question: {prompt} Answer: ",
+		f"Question: {to_fine_tune[character]} {prompt} Answer: ",
 		max_tokens=4800,
 		stop=[],
 		stream=True,
