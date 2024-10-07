@@ -29,7 +29,7 @@ def visitor(item, path):
 def get_response(prompt: str, character: str, ws):
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-m", "--model", type=str, default="Wizard-Vicuna30B-UncensoredQ4ks.gguf")
+	parser.add_argument("-m", "--model", type=str, default="wizard-vicuna-13b-uncensored.q4_k_m.gguf")
 	args = parser.parse_args()
 
 	llm = Llama(model_path=args.model, n_threads=48)
